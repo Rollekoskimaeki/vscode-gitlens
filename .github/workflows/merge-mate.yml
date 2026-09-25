@@ -24,6 +24,7 @@ jobs:
         steps:
             - uses: gitkraken/merge-mate-action/sync@v0.3.0
               with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
                   ai-provider: gitkraken
                   ai-api-key: ${{ secrets.GK_AI_PROVISIONER_TOKEN }}
                   apply-policy: ${{ inputs.apply-policy || 'review' }}
@@ -34,7 +35,8 @@ jobs:
                       authors:
                           - eamodio
                           - d13
-                          - axosoft-ramint
+                          - ramin-t
                           - sergeibbb
                           - justinrobots
                           - ianhattendorf
+                          - mustikka10
