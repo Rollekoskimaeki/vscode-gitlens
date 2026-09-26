@@ -6,12 +6,32 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- Adds task-specific messaging to the _Commit Graph_'s sign-in and upgrade screens ([#5820](https://github.com/gitkraken/vscode-gitlens/issues/5820), [#5784](https://github.com/gitkraken/vscode-gitlens/issues/5784)) &mdash; opening a commit, branch, tag, or stash, a file or folder's history, a comparison, your working changes, a branch focus, or an automatic rebase summary now names that task on the screen that interrupts it, and confirms it will open in the _Commit Graph_ once you have access. Ctrl-clicking a commit hash in the terminal no longer lands on an unexplained sign-in screen &mdash; it names the commit and holds it until you're signed in
+
+### Changed
+
+- Changes _Start Work_ and _Start PR Review_ to follow the `gitlens.ai.openInAgent` setting &mdash; after you pick an issue or pull request they now ask whether to open it in an agent or continue manually, unless you've set a default
+- Changes the agent pickers to remember your choice with a single _Always use this choice_ / _Always use this agent_ option, instead of a checkbox on every row
+
 ### Fixed
 
+- Fixes a comparison, or a file or folder history, opened in the _Commit Graph_ while signed out or before upgrading being discarded instead of opening once access is granted ([#5820](https://github.com/gitkraken/vscode-gitlens/issues/5820))
+- Fixes the _Commit Graph_'s sign-in and upgrade screens still describing the previous task when a second one arrives while they're open ([#5820](https://github.com/gitkraken/vscode-gitlens/issues/5820))
+- Fixes _Create Branch..._ discarding the branch name you entered when you choose _Create Branch in New Worktree_ ([#4501](https://github.com/gitkraken/vscode-gitlens/issues/4501)) &mdash; from a remote base the worktree step replaced your name with the remote branch's own and re-prompted with _A branch named 'main' already exists_, and from a local base that isn't checked out anywhere it quietly created the worktree on that branch instead of a new one; a requested branch name is now always honored, including the `pr/` branch _Open Worktree for Pull Request_ asks for
 - Fixes _Delete Branch..._ on a branch that has a worktree deleting the worktree but leaving the branch behind &mdash; Git refuses to delete a branch that's checked out in a worktree, so both now happen together in a single confirm with _Delete Branch_ pre-checked; uncheck it to keep the branch. _Prune Branches..._ works the same way
 - Fixes the _Delete Worktree_ confirm offering to delete a branch's upstream when that upstream is already missing from the remote
 - Fixes the _GitKraken AI_ usage meter saying _Nearly out_ when the weekly allowance is spent in full &mdash; it now reads _Allowance used_ in the error color, in both _GitLens Settings_ and the _Commit Graph_'s account rollup
   - Fixes the credits figure rounding a nearly-spent allowance to look identical to a fully-spent one (`3.2M of 3.2M credits` for either) &mdash; it now shows enough precision to tell the two counts apart, and the account rollup's percentage no longer rounds up to `100%` while credits remain
+- Fixes _Hide Remote-only Branches_ in the _Commit Graph_ hiding every remote branch ([#5852](https://github.com/gitkraken/vscode-gitlens/issues/5852)) &mdash; a remote branch that a local branch tracks isn't remote-only, so it now keeps its pill and its commits stay in the graph; only remote branches with no local counterpart are hidden
+  - Fixes a tracked remote branch still counting as remote-only when its local branch's tip sat outside the loaded commits &mdash; tracking is now resolved from all of your branches instead of only the ones the graph had walked, which also restores the upstream half of the ref pills it affected
+- Fixes the _Commit Graph_'s commit hover ignoring its minimum width &mdash; the width rule was invalid CSS and silently dropped, so a short commit message rendered as a narrow sliver instead of keeping the card's intended size
+- Fixes Azure DevOps pull requests returning `undefined` for their base and head repository links &mdash; the repository reference Azure embeds in a pull request does not include a web URL, so the link is now built from the organization and server the pull request was read from ([#5839](https://github.com/gitkraken/vscode-gitlens/issues/5839))
+- Fixes Azure DevOps Server links dropping the collection when the server sits behind a virtual directory &mdash; `https://server/tfs/DefaultCollection/…` read `tfs` as the organization and lost everything after it ([#5840](https://github.com/gitkraken/vscode-gitlens/issues/5840))
+- Fixes an Azure DevOps pull request's repository links being able to point at another organization, or another server entirely, when the pull request payload said so &mdash; the links are built from the configured organization now, and a fork's link must belong to it ([#5842](https://github.com/gitkraken/vscode-gitlens/issues/5842))
+- Fixes malformed Azure DevOps pull request web URLs &mdash; the URL had a double slash after the host (both `dev.azure.com` and `*.visualstudio.com`) and left project and repository names unencoded, so a project or repository named with a space put a literal space in the link ([#5836](https://github.com/gitkraken/vscode-gitlens/issues/5836))
+- Fixes autolinked pull requests and issues disappearing from _Inspect_, hovers, and views until the window is reloaded &mdash; a failed lookup (a rate limit, server error, or timeout) was remembered as "not found" for the rest of the session, and enrichment done before an integration finished connecting was kept for 30 minutes; failed lookups are now retried the next time they're needed
 
 ## [19.2.0] - 2026-09-16
 
